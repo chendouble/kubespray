@@ -86,4 +86,8 @@
     kubectl: "{{ bin_dir }}/kubectl"
     filename: "{{ kube_config_dir }}/addons/cert_manager/clusterissuer-cert-manager.yml"
     state: "latest"
+  register: clusterissuer_task
+  until: clusterissuer_task is succeeded
+  delay: "{{ retry_stagger | random + 3 }}"
+  retries: 4
   when: inventory_hostname == groups['kube-master'][0] and cert_manager_clusterissuer_manifest is succeeded
